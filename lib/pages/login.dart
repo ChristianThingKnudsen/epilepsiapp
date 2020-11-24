@@ -1,3 +1,4 @@
+import 'package:epilepsi_app/pages/relative_home.dart';
 import 'package:epilepsi_app/patient_id_widget.dart';
 import 'package:flutter/material.dart';
 
@@ -19,7 +20,10 @@ class _LoginPageState extends State<LoginPage> {
         centerTitle: true,
         title: Text(
           "Epilepsi App",
-          style: TextStyle(fontSize: 30, color: Colors.white,),
+          style: TextStyle(
+            fontSize: 30,
+            color: Colors.white,
+          ),
         ),
       ),
       body: SafeArea(
@@ -42,8 +46,10 @@ class _LoginPageState extends State<LoginPage> {
                           title: "Patient ID",
                           onSubmit: (value) {
                             _patientId = value;
-                            Navigator.pushNamed(context, "/patient",
-                                arguments: PatientHome(patientId: _patientId));
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => PatientHome(
+                                      patientId: _patientId,
+                                    )));
                           },
                         ));
                   },
@@ -61,7 +67,18 @@ class _LoginPageState extends State<LoginPage> {
                     borderRadius: BorderRadius.circular(30.0),
                   ),
                   onPressed: () {
-                    Navigator.pushNamed(context, "/relative");
+                    showDialog(
+                        context: context,
+                        child: PatientIdWidget(
+                          title: "Patient ID",
+                          onSubmit: (value) {
+                            _patientId = value;
+                            Navigator.of(context).push(MaterialPageRoute(
+                                builder: (context) => RelativeHome(
+                                      patientId: _patientId,
+                                    )));
+                          },
+                        ));
                   },
                   child: Text("Pårørende",
                       style: TextStyle(color: Colors.white, fontSize: 20)),
