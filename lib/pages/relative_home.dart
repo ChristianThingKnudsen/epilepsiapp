@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:fhir/r4.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:http/http.dart';
 
 class RelativeHome extends StatefulWidget {
@@ -32,6 +34,9 @@ class _RelativeHomeState extends State<RelativeHome> {
 
   final server = 'http://hapi.fhir.org/baseR4';
   final headers = {'Content-type': 'application/json'};
+
+  final FlutterLocalNotificationsPlugin flutterLocalNotificationsPlugin =
+      FlutterLocalNotificationsPlugin();
 
   var _newPatient = Patient(
     resourceType: 'Patient',
@@ -84,12 +89,25 @@ class _RelativeHomeState extends State<RelativeHome> {
     print("URL: " + url);
     var response = await get(url, headers: headers);
 
-    //final Map<String, dynamic> parsed = json.decode(response.body);
     var searchSetBundle = Bundle.fromJson(json.decode(response.body));
     print("Length: " + (searchSetBundle.entry.length).toString());
     _parsedObs = searchSetBundle.toJson();
 
     _getBP(_parsedObs, searchSetBundle.entry.length);
+  }
+
+  Future<void> _showNotification() async {
+    const AndroidNotificationDetails androidPlatformChannelSpecifics =
+        AndroidNotificationDetails(
+            'your channel id', 'your channel name', 'your channel description',
+            importance: Importance.max,
+            priority: Priority.max,
+            ticker: 'ticker');
+    const NotificationDetails platformChannelSpecifics =
+        NotificationDetails(android: androidPlatformChannelSpecifics);
+    await flutterLocalNotificationsPlugin.show(
+        0, 'Nyt anfald detekteret', 'Klik for detaljer', platformChannelSpecifics,
+        payload: 'item x');
   }
 
   @override
@@ -166,6 +184,25 @@ class _RelativeHomeState extends State<RelativeHome> {
             ),
           ),
           Divider(height: 0),
+          SizedBox(height: 20),
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: SizedBox(
+              height: MediaQuery.of(context).size.height * 0.08,
+              width: MediaQuery.of(context).size.width * 0.8,
+              child: RaisedButton(
+                color: Colors.green,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(30.0),
+                ),
+                onPressed: () async {
+                  await _showNotification();
+                },
+                child: Text("Get notification",
+                    style: TextStyle(color: Colors.white, fontSize: 20)),
+              ),
+            ),
+          ),
         ],
       ),
     );
