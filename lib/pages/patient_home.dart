@@ -219,7 +219,7 @@ class _PatientHomeState extends State<PatientHome> {
                   Builder(
                     builder: (BuildContext context) {
                       return SizedBox(
-                        height: MediaQuery.of(context).size.height * 0.49,
+                        height: MediaQuery.of(context).size.height * 0.39,
                         child: Scrollbar(
                           isAlwaysShown: true,
                           controller: _scrollController,
